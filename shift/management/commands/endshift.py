@@ -8,9 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for i in Shift.objects.filter(end_time=None):
-            z=Shift.objects.get(id=i.id)
-            delta = datetime.timedelta(hours=1)
-            now = datetime.datetime.now(datetime.timezone.utc)
-            if now - z.start_time >= delta:
-                Shift.objects.filter(id=i.id).update(end_time=z.start_time+delta)
-                print(z)
+            max_shift = datetime.timedelta(minutes=2)
+            if datetime.datetime.now(datetime.timezone.utc) - Shift.objects.get(id=i.id).start_time >= max_shift:
+                Shift.objects.filter(id=i.id).update(end_time=(Shift.objects.get(id=i.id).start_time+max_shift))
