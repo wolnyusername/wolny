@@ -14,7 +14,11 @@ def index(request):
         else:
             if user[0].password == request.POST.get('password'):
                 request.session['user'] = user[0].pk
-                return redirect('home')
+                user_shifts = list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))
+                if len(user_shifts) == 0:
+                    return redirect('user_start_shift')
+                else:
+                    return redirect('user_end_shift')
             else:
                 context['wrong_password'] = True
     return render(request, 'shift/index.html', context=context)
