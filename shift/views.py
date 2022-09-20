@@ -9,12 +9,12 @@ def index(request):
     #from pdb import set_trace;set_trace()
     context = {}
     if request.method == 'POST':
-        log = models.Worker.objects.filter(login=request.POST.get('login'))
-        if len(log) == 0:
+        user = models.Worker.objects.filter(login=request.POST.get('login'))
+        if len(user) == 0:
             context['wrong_user'] = True
         else:
-            if log[0].password == request.POST.get('password'):
-                request.session['user'] = log[0].pk
+            if user[0].password == request.POST.get('password'):
+                request.session['user'] = user[0].pk
                 return redirect('home')
             else:
                 context['wrong_password'] = True
@@ -23,23 +23,19 @@ def index(request):
 
 def home(request):
     context = {}
-    z = list(request.session.values())
     if request.method == 'POST':
         if request.POST.get('start') == 'start':
-            s = Shift.objects.filter(worker=z[0], end_time=None)
-            if len(s) > 0:
+            if len(Shift.objects.filter(worker=request.session.get('user'), end_time=None)) > 0:
                 context['shift_already_started'] = True
             else:
-                work = Worker.objects.get(id=z[0])
-                temp = Shift(worker=work)
-                temp.save()
+                new_shift = Shift(worker=Worker.objects.get(id=request.session.get('user')))
+                new_shift.save()
         if request.POST.get('end') == 'end':
-            s=Shift.objects.filter(end_time=None)
-            if len(s) <= 0:
+            if len(Shift.objects.filter(worker=request.session.get('user'), end_time=None)) == 0:
                 context['shift_not_started'] = True
             else:
-                Shift.objects.filter(end_time=None).update(end_time=datetime.datetime.now())
+                Shift.objects.filter(worker=request.session.get('user'), end_time=None).update(end_time=datetime.datetime.now())
         if request.POST.get('logout') == 'logout':
-            request.session.clear()
+            request.session.flush()
             return redirect('index')
     return render(request, 'shift/home.html', context=context)
