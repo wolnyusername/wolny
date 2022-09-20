@@ -1,0 +1,17 @@
+{% extends 'shift/base.html' %}
+
+{% block content %}
+{% if wrong_password %}
+wrong password
+{% endif %}
+{% if wrong_user %}
+wrong user
+{% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input id="login" type="text" name="login">
+        <input id="password" type="password" name="password">
+        <input type="submit" value="login">
+    </form>
+{% endblock %}

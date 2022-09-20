@@ -1,0 +1,19 @@
+{% extends 'shift/base.html' %}
+
+{% block content %}
+{% if shift_not_started %}
+shift not started
+{% endif %}
+{% if shift_already_started %}
+shift already started
+{% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="start" name="start">
+        <input type="submit" value="end" name="end">
+        <input type="submit" value="logout" name="logout">
+    </form>
+
+{% endblock %}
+
