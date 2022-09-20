@@ -23,10 +23,10 @@ def index(request):
 
 def home(request):
     context = {}
+    user_shifts = Shift.objects.filter(worker=request.session.get('user'), end_time=None)
+    user_id = request.session.get('user')
     if request.method == 'POST':
         if request.POST.get('start') == 'start':
-            user_shifts = Shift.objects.filter(worker=request.session.get('user'), end_time=None)
-            user_id = request.session.get('user')
             if len(user_shifts) > 0:
                 context['shift_already_started'] = True
             else:
