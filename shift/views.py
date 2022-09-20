@@ -23,21 +23,18 @@ def index(request):
 
 def home(request):
     context = {}
-    user_shifts = Shift.objects.filter(worker=request.session.get('user'), end_time=None)
+    user_shifts = list(Shift.objects.filter(worker=request.session.get('user'),end_time=None))
     user_id = request.session.get('user')
-    if request.method == 'POST':
-        if request.POST.get('start') == 'start':
-            if len(user_shifts) > 0:
-                context['shift_already_started'] = True
-            else:
-                new_shift = Shift(worker=Worker.objects.get(id=user_id))
-                new_shift.save()
-        if request.POST.get('end') == 'end':
-            if len(user_shifts) == 0:
-                context['shift_not_started'] = True
-            else:
-                Shift.objects.filter(worker=user_id, end_time=None).update(end_time=datetime.datetime.now())
-        if request.POST.get('logout') == 'logout':
-            request.session.flush()
-            return redirect('index')
+    if len(user_shifts) > 0:
+        context['shift_already_started'] = True
+        if request.method == 'POST':
+            Shift.objects.filter(worker=Worker(id=user_id), end_time = None).update(end_time=datetime.datetime.now())
+    else:
+        context['shift_not_started'] = True
+        if request.method == 'POST':
+            new_shift = Shift(worker=Worker(id=user_id))
+            new_shift.save()
+    if request.POST.get('logout') == 'logout':
+        request.session.flush()
+        return redirect('index')
     return render(request, 'shift/home.html', context=context)
