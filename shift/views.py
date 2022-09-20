@@ -25,16 +25,18 @@ def home(request):
     context = {}
     if request.method == 'POST':
         if request.POST.get('start') == 'start':
-            if len(Shift.objects.filter(worker=request.session.get('user'), end_time=None)) > 0:
+            user_shifts = Shift.objects.filter(worker=request.session.get('user'), end_time=None)
+            user_id = request.session.get('user')
+            if len(user_shifts) > 0:
                 context['shift_already_started'] = True
             else:
-                new_shift = Shift(worker=Worker.objects.get(id=request.session.get('user')))
+                new_shift = Shift(worker=Worker.objects.get(id=user_id))
                 new_shift.save()
         if request.POST.get('end') == 'end':
-            if len(Shift.objects.filter(worker=request.session.get('user'), end_time=None)) == 0:
+            if len(user_shifts) == 0:
                 context['shift_not_started'] = True
             else:
-                Shift.objects.filter(worker=request.session.get('user'), end_time=None).update(end_time=datetime.datetime.now())
+                Shift.objects.filter(worker=user_id, end_time=None).update(end_time=datetime.datetime.now())
         if request.POST.get('logout') == 'logout':
             request.session.flush()
             return redirect('index')
