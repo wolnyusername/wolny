@@ -41,3 +41,7 @@ def home(request):
             request.session.flush()
             return redirect('index')
     return render(request, 'shift/home.html', context=context)
+
+
+def sth(request):
+    return redirect(request.META['HTTP_REFERER'])
