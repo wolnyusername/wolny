@@ -2,19 +2,18 @@
 
 {% block content %}
 {% if shift_started %}
-<form method="post" action="">
+<form method="post">
         {% csrf_token %}
         <input type="submit" value="start" name="start">
         <input type="submit" value="logout" name="logout">
     </form>
 
 {% else %}
-<form method="post" action="">
+<form method="post">
         {% csrf_token %}
         <input type="submit" value="end" name="end">
         <input type="submit" value="logout" name="logout">
 </form>
-{{ request.META.HTTP_REFERER }}
 {% endif %}
 
 

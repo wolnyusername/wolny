@@ -41,7 +41,7 @@ def user_start_shift(request):
         if request.POST.get('start') == 'start':
             new_shift = Shift(worker=Worker(id=user_id))
             new_shift.save()
-            return redirect('home')
+            return redirect(request.META['HTTP_REFERER'])
         if request.POST.get('logout') == 'logout':
             request.session.flush()
             return redirect('index')
@@ -52,7 +52,7 @@ def user_end_shift(request):
     if request.method == 'POST':
         if request.POST.get('end') == 'end':
             Shift.objects.filter(worker=Worker(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
-            return redirect('home')
+            return redirect(request.META['HTTP_REFERER'])
         if request.POST.get('logout') == 'logout':
             request.session.flush()
             return redirect('index')
