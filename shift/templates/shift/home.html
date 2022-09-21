@@ -1,22 +1,11 @@
 {% extends 'shift/base.html' %}
-
 {% block content %}
 {% if shift_started %}
-<form method="post">
-        {% csrf_token %}
-        <input type="submit" value="start" name="start">
-        <input type="submit" value="logout" name="logout">
-    </form>
-
+<a href="home/end" style="">end</a>
+<a href="home/logout" style="">log out</a>
 {% else %}
-<form method="post">
-        {% csrf_token %}
-        <input type="submit" value="end" name="end">
-        <input type="submit" value="logout" name="logout">
-</form>
+<a href="home/start">start</a>
+<a href="home/logout">log out</a>
 {% endif %}
-
-
-
 {% endblock %}
 

@@ -28,32 +28,22 @@ def home(request):
             context['shift_started'] = False
         else:
             context['shift_started'] = True
-        if context['shift_started'] is False:
-            return redirect('user_start_shift')
-        else:
-            return redirect('user_end_shift')
     else:
         return redirect('index')
+    return render(request, 'shift/home.html', context=context)
 
 def user_start_shift(request):
     user_id = request.session.get('user')
-    if request.method == 'POST':
-        if request.POST.get('start') == 'start':
-            new_shift = Shift(worker=Worker(id=user_id))
-            new_shift.save()
-            return redirect(request.META['HTTP_REFERER'])
-        if request.POST.get('logout') == 'logout':
-            request.session.flush()
-            return redirect('index')
-    return render(request, 'shift/home.html')
+    new_shift = Shift(worker=Worker(id=user_id))
+    new_shift.save()
+    return redirect(request.META['HTTP_REFERER'])
 
 def user_end_shift(request):
     user_id = request.session.get('user')
-    if request.method == 'POST':
-        if request.POST.get('end') == 'end':
-            Shift.objects.filter(worker=Worker(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
-            return redirect(request.META['HTTP_REFERER'])
-        if request.POST.get('logout') == 'logout':
-            request.session.flush()
-            return redirect('index')
-    return render(request, 'shift/home.html')
+    Shift.objects.filter(worker=Worker(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
+    return redirect(request.META['HTTP_REFERER'])
+
+def log_out(request):
+    request.session.flush()
+    return redirect('index')
+
