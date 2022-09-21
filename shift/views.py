@@ -7,6 +7,7 @@ from .models import Shift, Worker
 def index(request):
     #from pdb import set_trace;set_trace()
     context = {}
+    context['logged'] = False
     if request.method == 'POST':
         user = models.Worker.objects.filter(login=request.POST.get('login'))
         if len(user) == 0:
@@ -15,16 +16,17 @@ def index(request):
             if user[0].password == request.POST.get('password'):
                 request.session['user'] = user[0].pk
                 request.session['logged'] = True
+                context['logged'] = True
                 return redirect('home')
             else:
                 context['wrong_password'] = True
     return render(request, 'shift/index.html', context=context)
 
 def home(request):
-    user_shifts = list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))
     context = {}
     if request.session['logged'] is True:
-        if len(user_shifts) == 0:
+        context['logged'] = True
+        if len(list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))) == 0:
             context['shift_started'] = False
         else:
             context['shift_started'] = True
@@ -34,13 +36,13 @@ def home(request):
 
 def user_start_shift(request):
     user_id = request.session.get('user')
-    new_shift = Shift(worker=Worker(id=user_id))
+    new_shift = Shift(worker=Worker.objects.get(id=user_id))
     new_shift.save()
     return redirect(request.META['HTTP_REFERER'])
 
 def user_end_shift(request):
     user_id = request.session.get('user')
-    Shift.objects.filter(worker=Worker(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
+    Shift.objects.filter(worker=Worker.objects.get(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
     return redirect(request.META['HTTP_REFERER'])
 
 def log_out(request):
