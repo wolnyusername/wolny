@@ -5,10 +5,16 @@
     <title>Title</title>
     {% block content %}
     {% endblock %}
-    {% if logged %}
-    <a href="home/logout" style="">log out</a>
-    {% endif %}
 
+    {% if logged and shift_started %}
+    <a href="home/end" style="">end</a>
+    {% endif %}
+    {% if logged and not shift_started %}
+    <a href="home/start">start</a>
+    {% endif %}
+    {% if logged %}
+    <a href="home/logout" style="">logout</a>
+    {% endif %}
 </head>
 <body style="background-color:blue">
 </body>

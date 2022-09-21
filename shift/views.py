@@ -17,6 +17,10 @@ def index(request):
                 request.session['user'] = user[0].pk
                 request.session['logged'] = True
                 context['logged'] = True
+                if len(list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))) == 0:
+                    context['shift_started'] = False
+                else:
+                    context['shift_started'] = True
                 return redirect('home')
             else:
                 context['wrong_password'] = True
