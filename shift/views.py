@@ -2,13 +2,37 @@ from django.shortcuts import render, redirect
 from . import models
 import datetime
 from .models import Shift, Worker
+from django.views import View
 
 
-def index(request):
+#def index(request):
     #from pdb import set_trace;set_trace()
-    context = {}
-    context['logged'] = False
-    if request.method == 'POST':
+#    context = {}
+#   context['logged'] = False
+#   if request.method == 'POST':
+#       user = models.Worker.objects.filter(login=request.POST.get('login'))
+#       if len(user) == 0:
+#           context['wrong_user'] = True
+#        else:
+#            if user[0].password == request.POST.get('password'):
+ #               request.session['user'] = user[0].pk
+  #              request.session['logged'] = True
+   #             context['logged'] = True
+    #            if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
+     #               context['shift_started'] = False
+      #          else:
+       #             context['shift_started'] = True
+        #        return redirect('home')
+         #   else:
+          #      context['wrong_password'] = True
+   # return render(request, 'shift/index.html', context=context)
+
+class Login(View):
+#    from pdb import set_trace;
+ #   set_trace()
+
+    def post(self, request):
+        context = {'logged': False}
         user = models.Worker.objects.filter(login=request.POST.get('login'))
         if len(user) == 0:
             context['wrong_user'] = True
@@ -17,25 +41,28 @@ def index(request):
                 request.session['user'] = user[0].pk
                 request.session['logged'] = True
                 context['logged'] = True
-                if len(list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))) == 0:
+                if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
                     context['shift_started'] = False
                 else:
                     context['shift_started'] = True
                 return redirect('home')
             else:
                 context['wrong_password'] = True
-    return render(request, 'shift/index.html', context=context)
+        return render(request, 'shift/index.html', context=context)
+    def get(self, request):
+        context={}
+        return render(request, 'shift/index.html', context=context)
 
 def home(request):
     context = {}
     if request.session['logged'] is True:
         context['logged'] = True
-        if len(list(Shift.objects.filter(worker=request.session.get('user'), end_time=None))) == 0:
+        if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
             context['shift_started'] = False
         else:
             context['shift_started'] = True
     else:
-        return redirect('index')
+        return redirect('login')
     return render(request, 'shift/home.html', context=context)
 
 def user_start_shift(request):
@@ -51,5 +78,5 @@ def user_end_shift(request):
 
 def log_out(request):
     request.session.flush()
-    return redirect('index')
+    return redirect('login')
 
