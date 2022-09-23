@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from . import models
 import datetime
 from .models import Shift, Worker
-from django.views import View
+from django.views.generic.base import TemplateView
 
 
 #def index(request):
@@ -26,10 +26,19 @@ from django.views import View
          #   else:
           #      context['wrong_password'] = True
    # return render(request, 'shift/index.html', context=context)
-class Context(View):
+class ContextView(TemplateView):
     context = {'logged': False}
+    def get_context_data(self, request, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['logged'] = True
+        if Shift.objects.filter(worker=request.get('user'), end_time=None).count() == 0:
+            context['shift_started'] = False
+        else:
+            context['shift_started'] = True
+        return context
 
-class Login(Context):
+
+class LoginView(ContextView):
     def post(self, request):
         user = models.Worker.objects.filter(login=request.POST.get('login'))
         if len(user) == 0:
@@ -38,11 +47,7 @@ class Login(Context):
             if user[0].password == request.POST.get('password'):
                 request.session['user'] = user[0].pk
                 request.session['logged'] = True
-                self.context['logged'] = True
-                if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
-                    self.context['shift_started'] = False
-                else:
-                    self.context['shift_started'] = True
+                super().get_context_data(request.session)
                 return redirect('home')
             else:
                 self.context['wrong_password'] = True
@@ -50,7 +55,7 @@ class Login(Context):
     def get(self, request):
         return render(request, 'shift/index.html', context=self.context)
 
-class Home(Context):
+class HomeView(ContextView):
     def get(self, request):
         if request.session['logged'] is True:
             self.context['logged'] = True
@@ -81,14 +86,14 @@ class Home(Context):
    # new_shift.save()
     #return redirect(request.META['HTTP_REFERER'])
 
-class UserStartShift(Context):
+class UserStartShiftView(ContextView):
     def get(self, request):
         user_id = request.session.get('user')
         new_shift = Shift(worker=Worker.objects.get(id=user_id))
         new_shift.save()
         return redirect(request.META['HTTP_REFERER'])
 
-class UserEndShift(Context):
+class UserEndShiftView(ContextView):
     def get(self, request):
         user_id = request.session.get('user')
         Shift.objects.filter(worker=Worker.objects.get(id=user_id), end_time=None).update(
@@ -104,7 +109,7 @@ class UserEndShift(Context):
  #   request.session.flush()
   #  return redirect('login')
 
-class LogOut(Context):
+class LogOutView(ContextView):
     def get(self, request):
         request.session.flush()
         self.context.clear()
