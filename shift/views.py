@@ -3,6 +3,7 @@ from . import models
 import datetime
 from .models import Shift, Worker
 from django.views.generic.base import TemplateView
+from django.views import View
 
 
 
@@ -35,24 +36,23 @@ class LoginView(ContextView):
 class HomeView(ContextView):
     template_name = 'shift/home.html'
 
-class UserStartShiftView(ContextView):
+class UserStartShiftView(View):
     def get(self, request):
         user_id = request.session.get('user')
         new_shift = Shift(worker=Worker.objects.get(id=user_id))
         new_shift.save()
         return redirect(request.META['HTTP_REFERER'])
 
-class UserEndShiftView(ContextView):
+class UserEndShiftView(View):
     def get(self, request):
         user_id = request.session.get('user')
         Shift.objects.filter(worker=Worker.objects.get(id=user_id), end_time=None).update(
             end_time=datetime.datetime.now())
         return redirect(request.META['HTTP_REFERER'])
 
-class LogOutView(ContextView):
+class LogOutView(View):
     def get(self, request):
         request.session.flush()
-        self.context.clear()
         return redirect('login')
 
 #def index(request):
