@@ -40,6 +40,7 @@ class ContextView(TemplateView):
 
 
 class LoginView(ContextView):
+    template_name = 'index.html'
     def post(self, request):
         user = models.Worker.objects.filter(login=request.POST.get('login'))
         if len(user) == 0:
@@ -48,13 +49,9 @@ class LoginView(ContextView):
             if user[0].password == request.POST.get('password'):
                 request.session['user'] = user[0].pk
                 request.session['logged'] = True
-                super().get_context_data(request.session)
                 return redirect('home')
             else:
                 self.context['wrong_password'] = True
-        return render(request, 'shift/index.html', context=self.context)
-    def get(self, request):
-        return render(request, 'shift/index.html', context=self.context)
 
 class HomeView(ContextView):
     def get(self, request):
