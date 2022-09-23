@@ -30,11 +30,12 @@ class ContextView(TemplateView):
     context = {'logged': False}
     def get_context_data(self, request, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['logged'] = True
-        if Shift.objects.filter(worker=request.get('user'), end_time=None).count() == 0:
-            context['shift_started'] = False
-        else:
-            context['shift_started'] = True
+        if "user" in request:
+            context['logged'] = True
+            if Shift.objects.filter(worker=request.get('user'), end_time=None).count() == 0:
+                context['shift_started'] = False
+            else:
+                context['shift_started'] = True
         return context
 
 
