@@ -1,19 +1,19 @@
-from django.shortcuts import render, redirect
-from . import models
 import datetime
-from .models import Shift, Worker
-from django.views.generic.base import TemplateView
-from django.views import View
 
+from django.shortcuts import redirect, render
+from django.views import View
+from django.views.generic.base import TemplateView
+
+from . import models
+from .models import Shift, Worker
 
 
 class ContextView(TemplateView):
-    context = {}
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        if "user" in self.request.session:
+        if "user_id" in self.request.session:
             context['logged'] = True
-            if Shift.objects.filter(worker=self.request.session.get('user'), end_time=None).count() == 0:
+            if Shift.objects.filter(worker=self.request.session.get('user_id'), end_time=None).count() == 0:
                 context['shift_started'] = False
             else:
                 context['shift_started'] = True
@@ -23,11 +23,11 @@ class LoginView(ContextView):
     template_name = 'shift/index.html'
     def post(self, request):
         user = models.Worker.objects.filter(login=request.POST.get('login'))
-        if len(user) == 0:
+        if models.Worker.objects.filter(login=request.POST.get('login')).count() == 0:
             self.context['wrong_user'] = True
         else:
             if user[0].password == request.POST.get('password'):
-                request.session['user'] = user[0].pk
+                request.session['user_id'] = user[0].id
                 request.session['logged'] = True
                 return redirect('home')
             else:
@@ -38,15 +38,13 @@ class HomeView(ContextView):
 
 class UserStartShiftView(View):
     def get(self, request):
-        user_id = request.session.get('user')
-        new_shift = Shift(worker=Worker.objects.get(id=user_id))
+        new_shift = Shift(worker=models.Worker.objects.get(id=request.session['user_id']))
         new_shift.save()
         return redirect(request.META['HTTP_REFERER'])
 
 class UserEndShiftView(View):
     def get(self, request):
-        user_id = request.session.get('user')
-        Shift.objects.filter(worker=Worker.objects.get(id=user_id), end_time=None).update(
+        Shift.objects.filter(worker=Worker.objects.get(id=request.session['user_id']), end_time=None).update(
             end_time=datetime.datetime.now())
         return redirect(request.META['HTTP_REFERER'])
 
@@ -54,52 +52,3 @@ class LogOutView(View):
     def get(self, request):
         request.session.flush()
         return redirect('login')
-
-#def index(request):
-    #from pdb import set_trace;set_trace()
-#    context = {}
-#   context['logged'] = False
-#   if request.method == 'POST':
-#       user = models.Worker.objects.filter(login=request.POST.get('login'))
-#       if len(user) == 0:
-#           context['wrong_user'] = True
-#        else:
-#            if user[0].password == request.POST.get('password'):
- #               request.session['user'] = user[0].pk
-  #              request.session['logged'] = True
-   #             context['logged'] = True
-    #            if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
-     #               context['shift_started'] = False
-      #          else:
-       #             context['shift_started'] = True
-        #        return redirect('home')
-         #   else:
-          #      context['wrong_password'] = True
-   # return render(request, 'shift/index.html', context=context)
-
-#def home(request):
- #   context = {}
-  #  if request.session['logged'] is True:
-   #     context['logged'] = True
-    #    if Shift.objects.filter(worker=request.session.get('user'), end_time=None).count() == 0:
-     #       context['shift_started'] = False
-      #  else:
-       #     context['shift_started'] = True
-#    else:
- #       return redirect('login')
-  #  return render(request, 'shift/home.html', context=context)
-
-#def user_start_shift(request):
- #   user_id = request.session.get('user')
-  #  new_shift = Shift(worker=Worker.objects.get(id=user_id))
-   # new_shift.save()
-    #return redirect(request.META['HTTP_REFERER'])
-
-#def user_end_shift(request):
- #   user_id = request.session.get('user')
-  #  Shift.objects.filter(worker=Worker.objects.get(id=user_id), end_time=None).update(end_time=datetime.datetime.now())
-   # return redirect(request.META['HTTP_REFERER'])
-
-#def log_out(request):
- #   request.session.flush()
-  #  return redirect('login')

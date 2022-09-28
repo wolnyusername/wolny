@@ -1,6 +1,7 @@
+import datetime
+
 from django.core.management.base import BaseCommand
 from shift.models import Shift
-import datetime
 
 
 class Command(BaseCommand):
