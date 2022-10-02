@@ -52,8 +52,10 @@ class LogOutView(View):
         return redirect('login')
 
 class DeleteShiftView(View):
-    def get(self,request):
-        Shift.objects.filter(id=request.POST.get('shift_id')).delete()
+    def post(self,request):
+        shift_list = request.POST.getlist('shift_id')
+        for i in shift_list:
+            Shift.objects.filter(id=i).delete()
         return redirect(request.META['HTTP_REFERER'])
 
 class ShiftListView(ContextView):
