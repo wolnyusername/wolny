@@ -64,5 +64,5 @@ class ShiftListView(ContextView):
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time'),20)
-        context['shift_list'] = p.page(1)
+        context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
