@@ -1,8 +1,9 @@
 {% extends 'shift/base.html' %}
 {% block content %}
 {% if shift_list %}
-<form method="POST">
-    {% csrf_token %}
+{% url 'delete_shift' as the_url %}
+<form method="POST" href="{{ the_url }}>
+{% csrf_token %}
 <table>
     <tr>
         <th>start</th>
@@ -13,10 +14,9 @@
         <td><input id="shift_id" type="checkbox" value="{{i}}">{{i.start_time}}</td>
         <td>{{i.end_time}}</td>
     </tr>
-{% endfor %}
-</table>
-    {% url 'delete_shift' as the_url %}
-    <a href="{{ the_url }}" style="">delete shifts</a>
+        {% endfor %}
+    </table>
+        <button>delete shift</button>
 </form>
 {% endif %}
 {% endblock %}

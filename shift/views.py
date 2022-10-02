@@ -53,7 +53,6 @@ class LogOutView(View):
 
 class DeleteShiftView(View):
     def get(self,request):
-
         Shift.objects.filter(id=request.POST.get('shift_id')).delete()
         return redirect(request.META['HTTP_REFERER'])
 
