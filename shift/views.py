@@ -1,12 +1,10 @@
 import datetime
-
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.base import TemplateView
-
 from . import models
 from .models import Shift, Worker
-
 
 class ContextView(TemplateView):
     def get_context_data(self,**kwargs):
@@ -52,3 +50,10 @@ class LogOutView(View):
     def get(self, request):
         request.session.flush()
         return redirect('login')
+
+class ShiftListView(ContextView):
+    template_name = 'shift/listofshift.html'
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shift_list'] = Shift.objects.filter(worker=self.request.session.get('user_id'))
+        return context

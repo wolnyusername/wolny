@@ -1,0 +1,9 @@
+{% extends 'shift/base.html' %}
+{% block content %}
+{% if shift_list %}
+{% for i in shift_list %}
+<li>{{ i }}</li>
+{% endfor %}
+{% endif %}
+{% endblock %}
+

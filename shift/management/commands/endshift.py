@@ -1,5 +1,3 @@
-import datetime
-
 from django.core.management.base import BaseCommand
 from shift.models import Shift
 
@@ -10,6 +8,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for i in Shift.objects.filter(end_time=None):
             max_shift = datetime.timedelta(minutes=2)
-            start_shift = Shift.objects.get(id=i.id).start_time
-            if (datetime.datetime.now(datetime.timezone.utc) - start_shift) >= max_shift:
-                Shift.objects.filter(id=i.id).update(end_time=(start_shift+max_shift))
+            if (datetime.datetime.now(datetime.timezone.utc) - i.start_shift) >= max_shift:
+                i.update(end_time=(i.start_shift+max_shift))

@@ -6,13 +6,18 @@
     {% block content %}
     {% endblock %}
     {% if logged and shift_started %}
-    <a href="home/end" style="">end</a>
+    {% url 'user_end_shift' as the_url %}
+    <a href="{{ the_url }}" style="">end</a>
     {% endif %}
     {% if logged and not shift_started %}
-    <a href="home/start">start</a>
+    {% url 'user_start_shift' as the_url %}
+    <a href="{{ the_url }}">start</a>
     {% endif %}
     {% if logged %}
-    <a href="home/logout" style="">logout</a>
+    {% url 'list_of_shifts' as the_url %}
+    <a href="{{ the_url }}" style="">zmiany</a>
+    {% url 'user_log_out' as the_url %}
+    <a href="{{ the_url }}" style="">logout</a>
     {% endif %}
 </head>
 <body style="background-color:blue">
