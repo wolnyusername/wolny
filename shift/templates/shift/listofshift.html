@@ -6,15 +6,17 @@
 {% csrf_token %}
 <table>
     <tr>
+        <th>zaznacz</th>
         <th>start</th>
         <th>end</th>
     </tr>
-{% for i in shift_list %}
-    <tr>
-        <td><input name="shift_id" type="checkbox" value="{{i.id}}">{{i.start_time}}</td>
+        {% for i in shift_list %}
+        <tr>
+        <td><input name="shift_id" type="checkbox" value="{{i.id}}"></td>
+        <td>{{i.start_time}}</td>
         <td>{{i.end_time}}</td>
-    </tr>
-{% endfor %}
+        </tr>
+        {% endfor %}
     </table>
         <button>delete shift</button>
 </form>
