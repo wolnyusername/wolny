@@ -16,7 +16,7 @@
     {% if logged %}
     {% url 'list_of_shifts' as the_url %}
     <a href="{{ the_url }}" style="">zmiany</a>
-    {% url 'user_log_out' as the_url %}
+    {% url 'log_out' as the_url %}
     <a href="{{ the_url }}" style="">logout</a>
     {% endif %}
 </head>
