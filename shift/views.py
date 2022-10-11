@@ -65,29 +65,28 @@ class ShiftListView(ContextView):
     template_name = 'shift/listofshift.html'
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        shifts_start = Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time')
-        shifts_end = Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time')
-        shifts_page = self.request.GET.get('page') or 1
-        p = Paginator(shifts_start, 20)
         context['field_sorted'] = 'start_time'
         context['direction'] = 'asc'
+        shift_start=Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time')
+        shift_end=Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time')
         if self.request.GET.get('sorting_field') == 'start':
             if self.request.GET.get('asc') == 'True':
-                p = Paginator(shifts_start, 20)
+                to_pagin=shift_start
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'asc'
             else:
-                p = Paginator(shifts_start.reverse(), 20)
+                to_pagin=shift_start.reverse()
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'dsc'
         elif self.request.GET.get('sorting_field') == 'end':
             if self.request.GET.get('asc') == 'True':
-                p = Paginator(shifts_end, 20)
+                to_pagin=shift_end
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'asc'
             else:
-                p = Paginator(shifts_end.reverse(), 20)
+                to_pagin=shift_end.reverse()
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'dsc'
-        context['shift_list'] = p.page(shifts_page)
+        p = Paginator(to_pagin, 20)
+        context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
