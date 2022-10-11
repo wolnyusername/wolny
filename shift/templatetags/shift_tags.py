@@ -8,8 +8,8 @@ def sorting(**kwargs):
     sorting_field = kwargs['sorting_field']
     asc = kwargs['asc']
     if asc is True:
-        sorted_url = f"{url}&pole={sorting_field}&asc=True"
+        sorted_url = f"{url}&sorting_field={sorting_field}&asc=True"
         return sorted_url
     else:
-        sorted_url = f"{url}&pole={sorting_field}&asc=False"
+        sorted_url = f"{url}&sorting_field={sorting_field}&asc=False"
         return sorted_url

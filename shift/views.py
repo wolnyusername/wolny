@@ -70,29 +70,30 @@ class ShiftListView(ContextView):
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         context['field_sorted'] = 'start_time'
         context['direction'] = 'asc'
-        if self.request.GET.get('pole') == 'start' and self.request.GET.get('asc') == 'True':
-            p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time'), 5)
-            context['shift_list'] = p.page(self.request.GET.get('page') or 1)
-            context['field_sorted'] = 'start_time'
-            context['direction'] = 'asc'
-            return context
-        elif self.request.GET.get('pole') == 'start' and self.request.GET.get('asc') == 'False':
-            p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-start_time'), 7)
-            context['shift_list'] = p.page(self.request.GET.get('page') or 1)
-            context['field_sorted'] = 'start_time'
-            context['direction'] = 'dsc'
-            return context
-        if self.request.GET.get('pole') == 'end' and self.request.GET.get('asc') == 'True':
-            p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time'), 3)
-            context['shift_list'] = p.page(self.request.GET.get('page') or 1)
-            context['field_sorted'] = 'end_time'
-            context['direction'] = 'asc'
-            return context
-        elif self.request.GET.get('pole') == 'end' and self.request.GET.get('asc') == 'False':
-            p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-end_time'), 2)
-            context['shift_list'] = p.page(self.request.GET.get('page') or 1)
-            context['field_sorted'] = 'end_time'
-            context['direction'] = 'dsc'
-            return context
-        print(context)
+        if self.request.GET.get('sorting_field') == 'start':
+            if self.request.GET.get('asc') == 'True':
+                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time'), 5)
+                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                context['field_sorted'] = 'start_time'
+                context['direction'] = 'asc'
+                return context
+            else:
+                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-start_time'), 5)
+                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                context['field_sorted'] = 'start_time'
+                context['direction'] = 'dsc'
+                return context
+        elif self.request.GET.get('sorting_field') == 'end':
+            if self.request.GET.get('asc') == 'True':
+                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time'), 3)
+                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                context['field_sorted'] = 'end_time'
+                context['direction'] = 'asc'
+                return context
+            else:
+                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-end_time'), 3)
+                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                context['field_sorted'] = 'end_time'
+                context['direction'] = 'dsc'
+                return context
         return context
