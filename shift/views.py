@@ -71,22 +71,22 @@ class ShiftListView(ContextView):
         shift_end=Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time')
         if self.request.GET.get('sorting_field') == 'start':
             if self.request.GET.get('asc') == 'True':
-                to_pagin=shift_start
+                queryset=shift_start
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'asc'
             else:
-                to_pagin=shift_start.reverse()
+                queryset=shift_start.reverse()
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'dsc'
-        elif self.request.GET.get('sorting_field') == 'end':
+        else:
             if self.request.GET.get('asc') == 'True':
-                to_pagin=shift_end
+                queryset=shift_end
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'asc'
             else:
-                to_pagin=shift_end.reverse()
+                queryset=shift_end.reverse()
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'dsc'
-        p = Paginator(to_pagin, 20)
+        p = Paginator(queryset, 20)
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
