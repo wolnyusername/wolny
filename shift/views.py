@@ -64,36 +64,33 @@ class DeleteShiftView(View):
 class ShiftListView(ContextView):
     template_name = 'shift/listofshift.html'
     def get_context_data(self,**kwargs):
-        print(self.request.GET)
         context = super().get_context_data(**kwargs)
-        p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time'), 20)
-        context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+        shifts = Shift.objects.filter(worker=self.request.session.get('user_id'))
+        shifts_page = self.request.GET.get('page')
+        p = Paginator(shifts.order_by('start_time'), 20)
+        context['shift_list'] = p.page(shifts_page or 1)
         context['field_sorted'] = 'start_time'
         context['direction'] = 'asc'
         if self.request.GET.get('sorting_field') == 'start':
             if self.request.GET.get('asc') == 'True':
-                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time'), 5)
-                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                p = Paginator(shifts.order_by('start_time'), 20)
+                context['shift_list'] = p.page(shifts_page or 1)
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'asc'
-                return context
             else:
-                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-start_time'), 5)
-                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                p = Paginator(shifts.order_by('-start_time'), 20)
+                context['shift_list'] = p.page(shifts_page or 1)
                 context['field_sorted'] = 'start_time'
                 context['direction'] = 'dsc'
-                return context
         elif self.request.GET.get('sorting_field') == 'end':
             if self.request.GET.get('asc') == 'True':
-                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time'), 3)
-                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                p = Paginator(shifts.order_by('end_time'), 20)
+                context['shift_list'] = p.page(shifts_page or 1)
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'asc'
-                return context
             else:
-                p = Paginator(Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('-end_time'), 3)
-                context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+                p = Paginator(shifts.order_by('-end_time'), 20)
+                context['shift_list'] = p.page(shifts_page or 1)
                 context['field_sorted'] = 'end_time'
                 context['direction'] = 'dsc'
-                return context
         return context
