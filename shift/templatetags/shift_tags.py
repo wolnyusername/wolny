@@ -4,11 +4,12 @@ register = template.Library()
 
 @register.simple_tag()
 def sorting(**kwargs):
-    pole = kwargs['pole']
+    url = kwargs['url']
+    sorting_field = kwargs['sorting_field']
     asc = kwargs['asc']
     if asc is True:
-        sorted_url = f"pole={pole}&asc=True"
+        sorted_url = f"{url}&pole={sorting_field}&asc=True"
         return sorted_url
     else:
-        sorted_url = f"pole={pole}&asc=False"
+        sorted_url = f"{url}&pole={sorting_field}&asc=False"
         return sorted_url
