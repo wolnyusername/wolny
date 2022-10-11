@@ -75,11 +75,11 @@ class ShiftListView(ContextView):
             q = q.order_by('end_time')
             context['field_sorted'] = 'end_time'
         if self.request.GET.get('asc') == 'True':
-            queryset=q
             context['direction'] = 'asc'
         else:
-            queryset=q.reverse()
+            q=q.reverse()
             context['direction'] = 'dsc'
-        p = Paginator(queryset, 20)
+        p = Paginator(q, 20)
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
+    
