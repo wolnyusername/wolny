@@ -3,18 +3,27 @@
 {% block content %}
 {% if shift_list %}
 {% url 'delete_shift' as delete_shift_url %}
-{% url 'list_of_shifts' as list_of_shifts_url %}
 <form method="POST" action="{{ delete_shift_url }}">
 {% csrf_token %}
 <table>
     <tr>
         <th>zaznacz</th>
-            <th><a href="" id="start">start</a></th>
-            {% sorting url=list_of_shifts_url pole='start' direction=True %}
-            {{ sorting }}
-            <th><a href="" id="end">end</a></th>
-            {% sorting url=list_of_shifts_url pole='end' direction=True%}
-            {{ sorting }}
+        {% if field_sorted == "start_time" and direction == "asc" %}
+            <th><a href="?{% sorting pole='start' asc=False %}" id="start">start</a></th>
+            <th><a href="?{% sorting pole='end' asc=False %}">end</a></th>
+        {% elif field_sorted == "start_time" and direction == "dsc" %}
+            <th><a href="?{% sorting pole='start' asc=True %}" id="start">start</a></th>
+            <th><a href="?{% sorting pole='end' asc=True %}">end</a></th>
+        {% elif field_sorted == "end_time" and direction == "asc" %}
+            <th><a href="?{% sorting pole='start' asc=False %}" id="start">start</a></th>
+            <th><a href="?{% sorting pole='end' asc=False %}" id="end">end</a></th>
+        {% elif field_sorted == "end_time" and direction == "dsc" %}
+            <th><a href="?{% sorting pole='start' asc=False %}" id="start">start</a></th>
+            <th><a href="?{% sorting pole='end' asc=True %}" id="end">end</a></th>
+        {% else %}
+            <th><a href="?{% sorting pole='start' asc=False %}" id="start">start</a></th>
+            <th><a href="?{% sorting pole='end' asc=False %}">end</a></th>
+        {% endif %}
     </tr>
         {% for i in shift_list %}
         <tr>
