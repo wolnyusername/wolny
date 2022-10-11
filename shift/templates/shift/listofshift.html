@@ -1,14 +1,20 @@
 {% extends 'shift/base.html' %}
+{% load shift_tags %}
 {% block content %}
 {% if shift_list %}
-{% url 'delete_shift' as the_url %}
-<form method="POST" action="{{ the_url }}">
+{% url 'delete_shift' as delete_shift_url %}
+{% url 'list_of_shifts' as list_of_shifts_url %}
+<form method="POST" action="{{ delete_shift_url }}">
 {% csrf_token %}
 <table>
     <tr>
         <th>zaznacz</th>
-        <th>start</th>
-        <th>end</th>
+            <th><a href="" id="start">start</a></th>
+            {% sorting url=list_of_shifts_url pole='start' direction=True %}
+            {{ sorting }}
+            <th><a href="" id="end">end</a></th>
+            {% sorting url=list_of_shifts_url pole='end' direction=True%}
+            {{ sorting }}
     </tr>
         {% for i in shift_list %}
         <tr>

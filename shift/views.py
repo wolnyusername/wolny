@@ -1,4 +1,6 @@
 import datetime
+from django import template
+from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
@@ -44,7 +46,7 @@ class UserStartShiftView(View):
 class UserEndShiftView(View):
     def get(self, request):
         Shift.objects.filter(worker=Worker.objects.get(id=request.session['user_id']), end_time=None).update(
-            end_time=datetime.datetime.now())
+            end_time=timezone.now())
         return redirect(request.META['HTTP_REFERER'])
 
 class LogOutView(View):
