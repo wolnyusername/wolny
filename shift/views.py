@@ -67,26 +67,19 @@ class ShiftListView(ContextView):
         context = super().get_context_data(**kwargs)
         context['field_sorted'] = 'start_time'
         context['direction'] = 'asc'
-        shift_start=Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('start_time')
-        shift_end=Shift.objects.filter(worker=self.request.session.get('user_id')).order_by('end_time')
+        q=Shift.objects.filter(worker=self.request.session.get('user_id'))
         if self.request.GET.get('sorting_field') == 'start':
-            if self.request.GET.get('asc') == 'True':
-                queryset=shift_start
-                context['field_sorted'] = 'start_time'
-                context['direction'] = 'asc'
-            else:
-                queryset=shift_start.reverse()
-                context['field_sorted'] = 'start_time'
-                context['direction'] = 'dsc'
+            q = q.order_by('start_time')
+            context['field_sorted'] = 'start_time'
         else:
-            if self.request.GET.get('asc') == 'True':
-                queryset=shift_end
-                context['field_sorted'] = 'end_time'
-                context['direction'] = 'asc'
-            else:
-                queryset=shift_end.reverse()
-                context['field_sorted'] = 'end_time'
-                context['direction'] = 'dsc'
+            q = q.order_by('end_time')
+            context['field_sorted'] = 'end_time'
+        if self.request.GET.get('asc') == 'True':
+            queryset=q
+            context['direction'] = 'asc'
+        else:
+            queryset=q.reverse()
+            context['direction'] = 'dsc'
         p = Paginator(queryset, 20)
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
