@@ -65,21 +65,25 @@ class ShiftListView(ContextView):
     template_name = 'shift/listofshift.html'
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        context['field_sorted'] = 'start_time'
-        context['direction'] = 'asc'
-        q=Shift.objects.filter(worker=self.request.session.get('user_id'))
-        if self.request.GET.get('sorting_field') == 'start':
-            q = q.order_by('start_time')
-            context['field_sorted'] = 'start_time'
-        else:
-            q = q.order_by('end_time')
-            context['field_sorted'] = 'end_time'
-        if self.request.GET.get('asc') == 'True':
-            context['direction'] = 'asc'
+        sorting_values = {"start_time", "end_time"}
+        sort = self.request.GET.get('sorting_field') or 'start_time'
+        q = Shift.objects.filter(worker=self.request.session.get('user_id'))
+        dir = self.request.GET.get('asc')
+        q = q.order_by(sort)
+        context['field_sorted'] = sort
+        if dir == 'True':
+            context['direction'] = dir
         else:
             q=q.reverse()
-            context['direction'] = 'dsc'
+            context['direction'] = dir
         p = Paginator(q, 20)
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
         return context
-    
+
+    def get(self,request):
+        sorting_values = {"start_time", "end_time"}
+        if request.GET.get('sorting_field'):
+            if request.GET.get('sorting_field') not in sorting_values:
+                return redirect('list_of_shifts')
+        return super(ShiftListView, self).get(request)
+
