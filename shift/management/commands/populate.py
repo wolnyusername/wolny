@@ -1,7 +1,9 @@
 import os.path
-from django.core.management.base import BaseCommand
 import random
 import string
+
+from django.core.management.base import BaseCommand
+
 from shift.models import Worker
 
 

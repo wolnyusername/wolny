@@ -10,24 +10,24 @@
     <tr>
         <th>zaznacz</th>
         {% if field_sorted == "start_time" %}
-            {% if direction == "True" %}
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='start_time' asc=False %}" id="start">start</a></th>
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='end_time' asc=False %}">end</a></th>
+            {% if direction == "asc" %}
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='start_time' direction=desc %}" id="start">start</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='end_time' direction=desc %}">end</a></th>
             {% else %}
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='start_time' asc=True %}" id="start">start</a></th>
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='end_time' asc=True %}">end</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='start_time' direction=asc %}" id="start">start</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='end_time' direction=asc %}">end</a></th>
             {% endif %}
-        {% elif field_sorted == "end_time" %}
-            {% if direction == "True" %}
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='start_time' asc=False %}" id="start">start</a></th>
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='end_time' asc=False %}" id="end">end</a></th>
+        {% elif sorting_field == "end_time" %}
+            {% if direction == "asc" %}
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='start_time' direction=desc %}" id="start">start</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='end_time' direction=desc %}">end</a></th>
             {% else %}
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='start_time' asc=True %}" id="start">start</a></th>
-                <th><a href="?{% sorting url='list_of_shifts' sorting_field='end_time' asc=True %}" id="end">end</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='start_time' direction=asc %}" id="start">start</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='end_time' direction=asc %}">end</a></th>
             {% endif %}
         {% else %}
-            <th><a href="?{% sorting url='list_of_shifts' sorting_field='start_time' asc=True %}" id="start">start</a></th>
-            <th><a href="?{% sorting url='list_of_shifts' sorting_field='end_time' asc=True %}">end</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='start_time' direction=desc %}" id="start">start</a></th>
+                <th><a href="?{% sorting url='list_of_shifts_url' sorting_field='end_time' direction=desc %}">end</a></th>
         {% endif %}
     </tr>
         {% for i in shift_list %}

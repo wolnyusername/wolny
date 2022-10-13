@@ -1,13 +1,16 @@
 import datetime
+
 from django import template
-from django.utils import timezone
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views import View
 from django.views.generic.base import TemplateView
+
 from . import models
 from .models import Shift, Worker
-from django.core.paginator import Paginator
+
 
 class ContextView(TemplateView):
     def get_context_data(self,**kwargs):
@@ -64,20 +67,19 @@ class DeleteShiftView(View):
 class ShiftListView(ContextView):
     template_name = 'shift/listofshift.html'
     def get_context_data(self,**kwargs):
+        #import pdb; pdb.set_trace()
         context = super().get_context_data(**kwargs)
-        sorting_values = {"start_time", "end_time"}
         sort = self.request.GET.get('sorting_field') or 'start_time'
         q = Shift.objects.filter(worker=self.request.session.get('user_id'))
-        dir = self.request.GET.get('asc')
+        direction = self.request.GET.get('direction')
+        print(self.request.GET)
         q = q.order_by(sort)
-        context['field_sorted'] = sort
-        if dir == 'True':
-            context['direction'] = dir
-        else:
+        if direction != "asc":
             q=q.reverse()
-            context['direction'] = dir
         p = Paginator(q, 20)
         context['shift_list'] = p.page(self.request.GET.get('page') or 1)
+        context['sorting_field'] = sort
+        context['direction'] = direction
         return context
 
     def get(self,request):
