@@ -72,8 +72,8 @@ class ShiftListView(ContextView):
         sort = self.request.GET.get('sorting_field') or 'start_time'
         q = Shift.objects.filter(worker=self.request.session.get('user_id'))
         direction = self.request.GET.get('direction')
-        print(self.request.GET)
         q = q.order_by(sort)
+        print(self.request.GET)
         if direction != "asc":
             q=q.reverse()
         p = Paginator(q, 20)
