@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shift', '0001_initial'),
+        ("shift", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='shift',
-            name='end_time',
+            model_name="shift",
+            name="end_time",
             field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.AlterField(
-            model_name='shift',
-            name='start_time',
+            model_name="shift",
+            name="start_time",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

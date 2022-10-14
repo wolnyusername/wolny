@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shift', '0002_alter_shift_end_time_alter_shift_start_time'),
+        ("shift", "0002_alter_shift_end_time_alter_shift_start_time"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='shift',
-            name='end_time',
+            model_name="shift",
+            name="end_time",
             field=models.DateTimeField(blank=True, default=datetime.date(2022, 9, 17)),
         ),
     ]
