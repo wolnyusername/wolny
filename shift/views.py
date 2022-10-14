@@ -80,18 +80,17 @@ class ShiftListView(ContextView):
     template_name = "shift/listofshift.html"
 
     def get_context_data(self, **kwargs):
-        # import pdb; pdb.set_trace()
         context = super().get_context_data(**kwargs)
-        sort = self.request.GET.get("sorting_field") or "start_time"
         q = Shift.objects.filter(worker=self.request.session.get("user_id"))
-        direction = self.request.GET.get("direction")
+        sort = self.request.GET.get("sorting_field") or "start_time"
         q = q.order_by(sort)
-        print(self.request.GET)
+        direction = self.request.GET.get("direction")
         if direction != "asc":
             q = q.reverse()
         p = Paginator(q, 20)
         context["shift_list"] = p.page(self.request.GET.get("page") or 1)
         context["sorting_field"] = sort
+
         context["direction"] = direction
         return context
 
